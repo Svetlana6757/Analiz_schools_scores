@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 data = {
     'Имя': ['Алексей', 'Борис', 'Виктор', 'Галина', 'Дмитрий', 'Екатерина', 'Иван', 'Лариса', 'Мария', 'Николай'],
@@ -39,3 +40,37 @@ print("\nIQR для оценок по математике:", IQR_math)
 std_deviation = df.std(numeric_only=True)
 print("\nСтандартное отклонение по каждому предмету:")
 print(std_deviation)
+
+# Визуализация первоначальных данных по математике
+plt.figure(figsize=(10, 6))
+df.boxplot(column=['Математика'])
+plt.title('Boxplot для оценок по математике (первоначальные данные)')
+plt.show()
+
+# Определяем нижнюю и верхнюю границы для определения выбросов
+Q1_math = df['Математика'].quantile(0.25)
+Q3_math = df['Математика'].quantile(0.75)
+IQR_math = Q3_math - Q1_math
+
+lower_bound = Q1_math - 1.5 * IQR_math
+upper_bound = Q3_math + 1.5 * IQR_math
+
+print("Q1 (25-й перцентиль):", Q1_math)
+print("Q3 (75-й перцентиль):", Q3_math)
+print("IQR (межквартильный размах):", IQR_math)
+print("Нижняя граница для выбросов:", lower_bound)
+print("Верхняя граница для выбросов:", upper_bound)
+
+# Удаляем выбросы
+df_no_outliers = df[(df['Математика'] >= lower_bound) & (df['Математика'] <= upper_bound)]
+
+# Визуализация данных после удаления выбросов
+plt.figure(figsize=(10, 6))
+df_no_outliers.boxplot(column=['Математика'])
+plt.title('Boxplot для оценок по математике (без выбросов)')
+plt.show()
+
+# Вывод нового DataFrame
+print("\nНовый DataFrame без выбросов:")
+print(df_no_outliers)
+
